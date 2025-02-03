@@ -25,7 +25,7 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Create dish.py from Secret
-        run: echo "${{ secrets.DIA_SCRIPT }}" > dish.py
+        run: echo '${{ secrets.DIA_SCRIPT }}' > dish.py
 
       - name: Create EPG.json from Secret
         run: echo '${{ secrets.EPG_JSON }}' > EPG.json
