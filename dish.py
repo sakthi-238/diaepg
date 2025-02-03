@@ -1,6 +1,6 @@
 import requests
 import xmltodict, json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 token = requests.get('https://ddt.vbox-you.shop/spiderman.php').json()['token']
 
@@ -12,8 +12,10 @@ epg_data = {
 	}
 }
 
+today_date = datetime.today().strftime('%Y-%m-%d')
+tomorrow_date = (datetime.today() + timedelta(days=1)).strftime('%Y-%m-%d')
 
-with open("epg_dialog.json", "r", encoding="utf-8") as file:
+with open("EPG.json", "r", encoding="utf-8") as file:
 	epg_json_data = json.load(file)
 
 
@@ -28,8 +30,8 @@ for eppg in epg_json_data:
 
 
 	params = {
-		"start_date": "2025-02-03T18:30:00.000Z",
-		"end_date": "2025-02-04T18:30:00.000Z",
+		"start_date": f"{today_date}T18:30:00.000Z",
+		"end_date": f"{tomorrow_date}T18:30:00.000Z",
 		"channels": f"{eppg['Id']}",
 		"translation": "en",
 		"hash": "37a6259cc0c1dae299a7866489dff0bd"
