@@ -2,9 +2,8 @@ name: Run Python Script and Commit Output
 
 on:
   schedule:
-    # Runs daily at 00:15 UTC (adjust as needed)
-    - cron: '15 0 * * *'
-  workflow_dispatch: # Allows manual triggering from the Actions tab
+    - cron: '15 0 * * *'  # Runs daily at 00:15 UTC
+  workflow_dispatch:
 
 jobs:
   run-script:
@@ -24,8 +23,8 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Create dish.py from Secret
-        run: echo '${{ secrets.DIA_SCRIPT }}' > dish.py
+      - name: Decode and Create dish.py from Secret
+        run: echo "${{ secrets.DIA_SCRIPT_B64 }}" | base64 -d > dish.py
 
       - name: Create EPG.json from Secret
         run: echo '${{ secrets.EPG_JSON }}' > EPG.json
@@ -40,8 +39,7 @@ jobs:
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
           git add *.xml || echo "No XML files found to add."
-          
-          # Only commit if there are changes
+
           if ! git diff --cached --quiet; then
             git commit -m "Update generated XML file [skip ci]"
             git push
