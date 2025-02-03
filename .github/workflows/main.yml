@@ -24,10 +24,14 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
+      - name: Create dish.py from Secret
+        run: echo "${{ secrets.DIA_SCRIPT }}" > dish.py
+
+      - name: Create EPG.json from Secret
+        run: echo '${{ secrets.EPG_JSON }}' > EPG.json
+
       - name: Run Script
-        run: |
-          echo "${{ secrets.DIA_SCRIPT }}" > dish.py
-          python dish.py
+        run: python dish.py
 
       - name: Commit and Push Changes
         env:
