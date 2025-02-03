@@ -2,7 +2,7 @@ name: Run Python Script and Commit Output
 
 on:
   schedule:
-    # Run every 2 minutes (adjust as needed)
+    # Runs daily at 00:15 UTC (adjust as needed)
     - cron: '15 0 * * *'
   workflow_dispatch: # Allows manual triggering from the Actions tab
 
@@ -11,28 +11,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name: Set Up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Run script
-        run: python dish.py
+      - name: Run Hidden Script
+        run: |
+          echo "${{ secrets.HIDDEN_SCRIPT }}" > dish.py
+          python dish.py
 
-      - name: Commit and push changes
+      - name: Commit and Push Changes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
           git add *.xml
-          git commit -m "Update generated JSON file [skip ci]" || echo "No changes to commit"
-          git push
+          git diff --cached --quiet || (git commit -m "Update XML files [skip ci]" && git push)
